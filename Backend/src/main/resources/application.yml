@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: "Green-Harbor-Backend"
+
+  data:
+    # redis:
+    #   host: redis-17122.c85.us-east-1-2.ec2.redns.redis-cloud.com
+    #   port: 17122
+    #   password: 0WQ6JhjwZzYCq2W9SzECssvEytCz1kP3
+    mongodb:
+      uri: mongodb+srv://mihirshigvan716:gvAgfFexbr282STb@cluster0.uhsj0wy.mongodb.net/GreenNestDB?retryWrites=true&w=majority&appName=Cluster0
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: greennestorder@gmail.com
+    password: txvq tksr pabu efle
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+server:
+  port: 8081
