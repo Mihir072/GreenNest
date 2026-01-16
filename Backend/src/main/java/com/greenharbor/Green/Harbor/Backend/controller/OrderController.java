@@ -40,7 +40,12 @@ public class OrderController {
             String userId = claims.get("userId", String.class);
             order.setUserId(userId);
 
+            System.out.println("Creating order: " + order);
+            System.out.println("Order items: " + order.getItems());
+
             Order savedOrder = orderService.createOrder(order);
+
+            System.out.println("Order created successfully with ID: " + savedOrder.getId());
 
             // Send confirmation email
             String emailBody = buildOrderConfirmationEmail(order);
@@ -48,8 +53,10 @@ public class OrderController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
         } catch (Exception e) {
+            System.err.println("Error placing order: " + e.getMessage());
+            e.printStackTrace();
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Failed to place order");
+            errorResponse.put("error", "Failed to place order: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }

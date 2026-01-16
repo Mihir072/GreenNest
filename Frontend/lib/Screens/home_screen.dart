@@ -217,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       //--------------------- BODY ---------------------//
       body: SafeArea(
         top: false,
-        bottom: false,
+        bottom: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

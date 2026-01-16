@@ -25,6 +25,8 @@ public class PaymentController {
     public ResponseEntity<?> initiatePayment(@RequestBody Map<String, Object> paymentData,
                                              @RequestHeader("Authorization") String authHeader) {
         try {
+            System.out.println("Payment Data Received: " + paymentData);
+            
             String token = authHeader.replace("Bearer ", "");
             Claims claims = JwtUtil.extractAllClaims(token);
             String userId = claims.get("userId", String.class);
@@ -40,10 +42,14 @@ public class PaymentController {
             response.put("status", "INITIATED");
             response.put("timestamp", System.currentTimeMillis());
 
+            System.out.println("Payment Initiated with ID: " + paymentId);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
+            System.err.println("Error initiating payment: " + e.getMessage());
+            e.printStackTrace();
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Failed to initiate payment");
+            errorResponse.put("error", "Failed to initiate payment: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }

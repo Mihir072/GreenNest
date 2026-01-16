@@ -33,6 +33,11 @@ public class AuthService {
             throw new IllegalArgumentException("Email already registered");
         }
 
+        // Set default role if not provided
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("USER");
+        }
+
         user.setPassword(encoder.encode(user.getPassword()));
         return userRepo.save(user);
     }

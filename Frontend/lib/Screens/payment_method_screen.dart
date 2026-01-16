@@ -43,9 +43,12 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
         token: widget.userToken,
       );
 
-      if (response.statusCode == 200) {
+      print('Payment Initiate Response Status: ${response.statusCode}');
+      print('Payment Initiate Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        final paymentId = responseData['data']['paymentId'];
+        final paymentId = responseData['paymentId'] ?? '';
 
         if (mounted) {
           if (_selectedMethod == 'UPI') {
@@ -73,6 +76,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           }
         }
       } else {
+        print('Payment initiate failed with status: ${response.statusCode}');
         CustomToast.error(
           title: 'Payment Failed',
           message: 'Unable to initiate payment. Try again',

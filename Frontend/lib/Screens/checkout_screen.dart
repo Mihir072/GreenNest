@@ -84,7 +84,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         token: widget.userToken,
       );
 
-      if (response.statusCode == 200) {
+      print('Order Response Status: ${response.statusCode}');
+      print('Order Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         final orderId = responseData['_id'] ?? '';
 
@@ -107,12 +110,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           );
         }
       } else {
+        print('Order creation failed with status: ${response.statusCode}');
         CustomToast.error(
           title: 'Order Failed',
           message: 'Unable to create order. Try again',
         );
       }
     } catch (e) {
+      print('Order Exception: $e');
       CustomToast.error(
         title: 'Error Occurred',
         message: 'Something went wrong. Please try again',

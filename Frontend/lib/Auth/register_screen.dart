@@ -52,17 +52,27 @@ class RegisterScreenState extends State<RegisterScreen> {
 
       context.hideLoader();
 
+      print('Register Response Status: ${response.statusCode}');
+      print('Register Response Body: ${response.body}');
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         CustomToast.success(
           title: 'Registration Complete',
           message: 'Account created successfully',
         );
-        context.push(HomeScreen(
-          email: data["email"],
-          token: data["email"],
-        ));
+
+        // Small delay to let toast display
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        if (mounted) {
+          context.push(HomeScreen(
+            email: data["email"] ?? emailCtrl.text,
+            token: data["email"] ?? emailCtrl.text,
+          ));
+        }
       } else {
+        print('Register Error: ${response.body}');
         CustomToast.error(
           title: 'Registration Failed',
           message: 'Could not create account',
@@ -70,6 +80,7 @@ class RegisterScreenState extends State<RegisterScreen> {
       }
     } catch (e) {
       context.hideLoader();
+      print('Register Exception: $e');
       CustomToast.error(
         title: 'Error',
         message: 'Something went wrong',
