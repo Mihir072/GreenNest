@@ -27,11 +27,26 @@ class _AdminCategoryManagementState extends State<AdminCategoryManagement> {
   Future<void> _loadCategories() async {
     try {
       final response = await ApiService.getAdminCategories(token: widget.token);
+      print('Categories Response: ${response.body}');
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        setState(() => _categories = data['data'] ?? []);
+        final dynamic data = jsonDecode(response.body);
+        List<dynamic> categoriesList = [];
+
+        // Handle different response formats
+        if (data is List) {
+          categoriesList = data;
+        } else if (data is Map) {
+          if (data.containsKey('data')) {
+            categoriesList = data['data'] ?? [];
+          } else if (data.containsKey('content')) {
+            categoriesList = data['content'] ?? [];
+          }
+        }
+
+        setState(() => _categories = categoriesList);
       }
     } catch (e) {
+      print('Error loading categories: $e');
       CustomToast.error(
         title: 'Load Error',
         message: 'Could not load categories',

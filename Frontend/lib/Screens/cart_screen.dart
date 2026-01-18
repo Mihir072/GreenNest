@@ -149,7 +149,8 @@ class _CartScreenState extends State<CartScreen> {
       });
       CustomToast.error(
         title: 'Order Failed',
-        message: 'Unable to place order. Please check your details and try again.',
+        message:
+            'Unable to place order. Please check your details and try again.',
       );
       print('Error processing order: $e');
     }

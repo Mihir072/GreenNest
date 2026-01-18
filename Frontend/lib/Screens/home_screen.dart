@@ -91,9 +91,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> fetchCategories() async {
     try {
       final response = await ApiService.getCategories();
+      print('Categories Response Status: ${response.statusCode}');
+      print('Categories Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
+        final dynamic data = jsonDecode(response.body);
+        List<dynamic> categoriesList = [];
+
+        // Handle different response formats
+        if (data is List) {
+          categoriesList = data;
+        } else if (data is Map) {
+          if (data.containsKey('data')) {
+            categoriesList = data['data'] ?? [];
+          } else if (data.containsKey('content')) {
+            categoriesList = data['content'] ?? [];
+          }
+        }
+
+        print('Parsed ${categoriesList.length} categories');
         setState(() {
-          categories = jsonDecode(response.body);
+          categories = categoriesList;
           isLoadingCategories = false;
         });
       }

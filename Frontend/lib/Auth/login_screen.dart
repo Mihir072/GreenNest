@@ -66,8 +66,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
             if (!mounted) return;
 
-            // Check if user is admin
-            bool isAdmin = emailCtrl.text.toLowerCase() == 'admin@example.com';
+            // Check if user is admin based on role from API response
+            bool isAdmin = data['role'] == 'ADMIN';
 
             if (isAdmin) {
               // Route to admin dashboard

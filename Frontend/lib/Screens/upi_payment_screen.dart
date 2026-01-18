@@ -350,7 +350,8 @@ class _UPIPaymentScreenState extends State<UPIPaymentScreen> {
                         } else {
                           CustomToast.warning(
                             title: 'Invalid UPI ID',
-                            message: 'Enter a valid UPI ID (e.g., user@okhdfcbank)',
+                            message:
+                                'Enter a valid UPI ID (e.g., user@okhdfcbank)',
                           );
                         }
                       },

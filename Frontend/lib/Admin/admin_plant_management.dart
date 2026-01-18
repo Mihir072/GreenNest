@@ -27,11 +27,26 @@ class _AdminPlantManagementState extends State<AdminPlantManagement> {
   Future<void> _loadPlants() async {
     try {
       final response = await ApiService.getAdminPlants(token: widget.token);
+      print('Plants Response: ${response.body}');
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        setState(() => _plants = data['data'] ?? []);
+        final dynamic data = jsonDecode(response.body);
+        List<dynamic> plantsList = [];
+
+        // Handle different response formats
+        if (data is List) {
+          plantsList = data;
+        } else if (data is Map) {
+          if (data.containsKey('data')) {
+            plantsList = data['data'] ?? [];
+          } else if (data.containsKey('content')) {
+            plantsList = data['content'] ?? [];
+          }
+        }
+
+        setState(() => _plants = plantsList);
       }
     } catch (e) {
+      print('Error loading plants: $e');
       CustomToast.error(
         title: 'Load Error',
         message: 'Could not load plants',
@@ -44,8 +59,21 @@ class _AdminPlantManagementState extends State<AdminPlantManagement> {
     try {
       final response = await ApiService.getAdminCategories(token: widget.token);
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        setState(() => _categories = data['data'] ?? []);
+        final dynamic data = jsonDecode(response.body);
+        List<dynamic> categoriesList = [];
+
+        // Handle different response formats
+        if (data is List) {
+          categoriesList = data;
+        } else if (data is Map) {
+          if (data.containsKey('data')) {
+            categoriesList = data['data'] ?? [];
+          } else if (data.containsKey('content')) {
+            categoriesList = data['content'] ?? [];
+          }
+        }
+
+        setState(() => _categories = categoriesList);
       }
     } catch (e) {
       // Categories load failed, continue
@@ -106,7 +134,40 @@ class _AdminPlantManagementState extends State<AdminPlantManagement> {
     final stockCtrl =
         TextEditingController(text: plant?['stock'].toString() ?? '');
     final imageCtrl = TextEditingController(text: plant?['imageUrl'] ?? '');
-    String? selectedCategory = plant?['category'];
+
+    // Get the plant's current category
+    String? plantCategory = plant?['category'];
+
+    // Check if the plant's category exists in the available categories
+    bool categoryExists =
+        _categories.any((cat) => cat['name'] == plantCategory);
+
+    // Set initial selected category - include legacy category if it exists
+    String? selectedCategory = plantCategory;
+
+    // Build dropdown items - include the plant's existing category if not in list
+    List<DropdownMenuItem<String>> buildCategoryItems() {
+      List<DropdownMenuItem<String>> items = _categories.map((cat) {
+        return DropdownMenuItem<String>(
+          value: cat['name'],
+          child: Text(cat['name']),
+        );
+      }).toList();
+
+      // If plant has a category that's not in the list, add it as an option
+      if (plantCategory != null &&
+          plantCategory.isNotEmpty &&
+          !categoryExists) {
+        items.insert(
+            0,
+            DropdownMenuItem<String>(
+              value: plantCategory,
+              child: Text('$plantCategory (legacy)'),
+            ));
+      }
+
+      return items;
+    }
 
     showDialog(
       context: context,
@@ -191,16 +252,13 @@ class _AdminPlantManagementState extends State<AdminPlantManagement> {
                     ),
                   ),
                 const SizedBox(height: 12),
-                DropdownButtonFormField(
+                DropdownButtonFormField<String>(
                   value: selectedCategory,
                   decoration: const InputDecoration(labelText: 'Category'),
-                  items: _categories.map((cat) {
-                    return DropdownMenuItem(
-                      value: cat['name'],
-                      child: Text(cat['name']),
-                    );
-                  }).toList(),
-                  onChanged: (value) => selectedCategory = value as String?,
+                  hint: const Text('Select a category'),
+                  items: buildCategoryItems(),
+                  onChanged: (value) =>
+                      setState(() => selectedCategory = value),
                 ),
               ],
             ),
