@@ -174,12 +174,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       final response = await ApiService.getUserByEmail(widget.email);
       print('Home - fetchUserInfo Response Status: ${response.statusCode}');
       print('Home - fetchUserInfo Response Body: ${response.body}');
-      
+
       if (response.statusCode == 200) {
         final dynamic data = jsonDecode(response.body);
         setState(() {
           if (data is Map) {
-            final Map<String, dynamic> userMap = Map<String, dynamic>.from(data);
+            final Map<String, dynamic> userMap =
+                Map<String, dynamic>.from(data);
             username = userMap['name'] ?? 'User';
           } else {
             username = 'User';

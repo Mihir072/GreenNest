@@ -6,14 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:greennest/Auth/login_screen.dart';
 import 'package:greennest/Helper/loader_extensions.dart';
 import 'package:greennest/Helper/navigation_extensions.dart';
-import 'package:greennest/Helper/spacing_helper.dart';
-import 'package:greennest/Screens/home_screen.dart';
+import 'package:greennest/Screens/main_navigation_screen.dart';
 import 'package:greennest/Services/api_service.dart';
-import 'package:greennest/Util/colors.dart';
 import 'package:greennest/Util/icons.dart';
 import 'package:greennest/Util/sizes.dart';
 import 'package:greennest/Util/strings.dart';
-import 'package:greennest/Widget/custom_button.dart';
 import 'package:greennest/Widget/custom_text.dart';
 import 'package:greennest/Widget/custom_text_field.dart';
 import 'package:greennest/Widget/custom_toast.dart';
@@ -57,6 +54,8 @@ class RegisterScreenState extends State<RegisterScreen> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
+        print('Register Response Data: $data');
+        
         CustomToast.success(
           title: 'Registration Complete',
           message: 'Account created successfully',
@@ -66,10 +65,21 @@ class RegisterScreenState extends State<RegisterScreen> {
         await Future.delayed(const Duration(milliseconds: 500));
 
         if (mounted) {
-          context.push(HomeScreen(
-            email: data["email"] ?? emailCtrl.text,
-            token: data["email"] ?? emailCtrl.text,
-          ));
+          // Navigate to MainNavigationScreen with email and token
+          final email = data["email"] ?? emailCtrl.text;
+          final token = data["token"] ?? data["_id"] ?? emailCtrl.text;
+          
+          print('Register - Navigating with email: $email, token: $token');
+          
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => MainNavigationScreen(
+                email: email,
+                token: token,
+              ),
+            ),
+            (route) => false,
+          );
         }
       } else {
         print('Register Error: ${response.body}');

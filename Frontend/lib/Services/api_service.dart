@@ -580,7 +580,8 @@ class ApiService {
     String? orderId,
   }) async {
     try {
-      String url = '$baseUrl/api/payments/verify?paymentId=$paymentId&isSuccess=$isSuccess&failureReason=$failureReason';
+      String url =
+          '$baseUrl/api/payments/verify?paymentId=$paymentId&isSuccess=$isSuccess&failureReason=$failureReason';
       if (orderId != null && orderId.isNotEmpty) {
         url += '&orderId=$orderId';
       }

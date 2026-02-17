@@ -63,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final response = await ApiService.getUserByEmail(widget.email);
       print('Profile - API Response Status: ${response.statusCode}');
       print('Profile - API Response Body: ${response.body}');
-      
+
       if (response.statusCode == 200) {
         final dynamic data = jsonDecode(response.body);
         setState(() {
@@ -76,7 +76,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
         print('Profile - Loaded User Info: $userInfo');
       } else {
-        print('Profile - Failed to load user info: Status ${response.statusCode}');
+        print(
+            'Profile - Failed to load user info: Status ${response.statusCode}');
         print('Profile - Error response: ${response.body}');
         setState(() {
           userInfo = {};
