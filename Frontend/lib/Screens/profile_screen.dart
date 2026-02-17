@@ -59,10 +59,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> loadUserInfo() async {
-    final response = await ApiService.getUserByEmail(widget.email);
-    if (response.statusCode == 200) {
+    try {
+      final response = await ApiService.getUserByEmail(widget.email);
+      print('Profile - API Response Status: ${response.statusCode}');
+      print('Profile - API Response Body: ${response.body}');
+      
+      if (response.statusCode == 200) {
+        final dynamic data = jsonDecode(response.body);
+        setState(() {
+          // The backend returns the user object directly
+          if (data is Map) {
+            userInfo = Map<String, dynamic>.from(data);
+          } else {
+            userInfo = {};
+          }
+        });
+        print('Profile - Loaded User Info: $userInfo');
+      } else {
+        print('Profile - Failed to load user info: Status ${response.statusCode}');
+        print('Profile - Error response: ${response.body}');
+        setState(() {
+          userInfo = {};
+        });
+      }
+    } catch (e) {
+      print('Profile - Error loading user info: $e');
       setState(() {
-        userInfo = jsonDecode(response.body);
+        userInfo = {};
       });
     }
   }

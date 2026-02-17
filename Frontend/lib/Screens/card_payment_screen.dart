@@ -137,6 +137,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
         isSuccess: true,
         failureReason: '',
         token: widget.userToken,
+        orderId: widget.orderId,
       );
 
       if (response.statusCode == 200 && mounted) {

@@ -172,18 +172,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> fetchUserInfo() async {
     try {
       final response = await ApiService.getUserByEmail(widget.email);
+      print('Home - fetchUserInfo Response Status: ${response.statusCode}');
+      print('Home - fetchUserInfo Response Body: ${response.body}');
+      
       if (response.statusCode == 200) {
-        final user = jsonDecode(response.body);
+        final dynamic data = jsonDecode(response.body);
         setState(() {
-          username = user['name'] ?? '';
+          if (data is Map) {
+            final Map<String, dynamic> userMap = Map<String, dynamic>.from(data);
+            username = userMap['name'] ?? 'User';
+          } else {
+            username = 'User';
+          }
+        });
+        print('Home - Username set to: $username');
+      } else {
+        print('Home - Failed to fetch user info: ${response.statusCode}');
+        setState(() {
+          username = 'User';
         });
       }
     } catch (e) {
-      print('Error fetching user info: $e');
-      CustomToast.warning(
-        title: 'User Info',
-        message: 'Could not load profile. Pull to refresh',
-      );
+      print('Home - Error fetching user info: $e');
+      setState(() {
+        username = 'User';
+      });
     }
   }
 

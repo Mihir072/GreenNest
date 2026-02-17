@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
+import 'main_navigation_screen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   final String paymentId;
@@ -183,7 +183,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) =>
-                            HomeScreen(email: email, token: token),
+                            MainNavigationScreen(email: email, token: token),
                       ),
                       (route) => false,
                     );

@@ -48,6 +48,7 @@ class _UPIPaymentScreenState extends State<UPIPaymentScreen> {
         isSuccess: isSuccess,
         failureReason: failureReason ?? '',
         token: widget.userToken,
+        orderId: widget.orderId,
       );
 
       if (response.statusCode == 200) {

@@ -3,9 +3,10 @@
 import 'dart:convert';
 import 'package:greennest/Helper/email_request.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.0.104:8081';
+  static const String baseUrl = 'http://192.168.0.106:8081';
 
   static Future<http.Response> getCategories() async {
     try {
@@ -195,7 +196,19 @@ class ApiService {
   //--------------------- GET USER INFO ---------------------//
 
   static Future<http.Response> getUserByEmail(String email) async {
-    return await http.get(Uri.parse('$baseUrl/auth/users/$email'));
+    try {
+      // URL encode the email to handle special characters like @ and .
+      final encodedEmail = Uri.encodeComponent(email);
+      final url = '$baseUrl/auth/users/$encodedEmail';
+      print('API Call: GET $url');
+      final response = await http.get(Uri.parse(url));
+      print('getUserByEmail Response Status: ${response.statusCode}');
+      print('getUserByEmail Response Body: ${response.body}');
+      return response;
+    } catch (e) {
+      print('getUserByEmail Error: $e');
+      rethrow;
+    }
   }
 
   //--------------------- Email Sending ---------------------//
@@ -564,11 +577,15 @@ class ApiService {
     required bool isSuccess,
     required String failureReason,
     required String token,
+    String? orderId,
   }) async {
     try {
+      String url = '$baseUrl/api/payments/verify?paymentId=$paymentId&isSuccess=$isSuccess&failureReason=$failureReason';
+      if (orderId != null && orderId.isNotEmpty) {
+        url += '&orderId=$orderId';
+      }
       final response = await http.post(
-        Uri.parse(
-            '$baseUrl/api/payments/verify?paymentId=$paymentId&isSuccess=$isSuccess&failureReason=$failureReason'),
+        Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
