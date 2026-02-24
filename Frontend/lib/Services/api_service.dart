@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.0.106:8081';
+  // static const String baseUrl = 'http://192.168.0.106:8081';
+  static const String baseUrl = 'https://greennest-jeww.onrender.com';
 
   static Future<http.Response> getCategories() async {
     try {
