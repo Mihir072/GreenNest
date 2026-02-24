@@ -5,8 +5,8 @@ FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 
 # Copy pom.xml and source code
-COPY pom.xml .
-COPY src ./src
+COPY Backend/pom.xml .
+COPY Backend/src ./src
 
 # Build the Spring Boot app
 RUN mvn clean package -DskipTests
