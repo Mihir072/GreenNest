@@ -55,7 +55,7 @@ class RegisterScreenState extends State<RegisterScreen> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         print('Register Response Data: $data');
-        
+
         CustomToast.success(
           title: 'Registration Complete',
           message: 'Account created successfully',
@@ -68,9 +68,9 @@ class RegisterScreenState extends State<RegisterScreen> {
           // Navigate to MainNavigationScreen with email and token
           final email = data["email"] ?? emailCtrl.text;
           final token = data["token"] ?? data["_id"] ?? emailCtrl.text;
-          
+
           print('Register - Navigating with email: $email, token: $token');
-          
+
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => MainNavigationScreen(
