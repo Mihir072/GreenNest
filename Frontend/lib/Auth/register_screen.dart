@@ -35,6 +35,12 @@ class RegisterScreenState extends State<RegisterScreen> {
     }
     context.showLoader(message: loadingIn);
     try {
+      print('=== REGISTER ATTEMPT ===');
+      print('Name: ${nameCtrl.text}');
+      print('Email: ${emailCtrl.text}');
+      print('Password: ${passwordCtrl.text}');
+      print('Address: ${addressCtrl.text}');
+
       final response = await ApiService.registerUser(
         name: nameCtrl.text,
         email: emailCtrl.text,

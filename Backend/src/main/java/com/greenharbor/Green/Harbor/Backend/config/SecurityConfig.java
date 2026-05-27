@@ -13,15 +13,16 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final String SECRET = "aHR0cG1fZ3JlZW5fZ2F0ZV9zZWN1cmVfMTIzNA=="; // same as JwtUtil
+    private static final String SECRET = "eW91ci0yNTYtYml0LXNlY3JldC1rZXktbmVlZHMtdG8tYmUtYXQtbGVhc3QtMzItYnl0ZXMtbG9uZw=="; // same as JwtUtil
+    private static final byte[] DECODED_KEY = Base64.getDecoder().decode(SECRET);
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,6 +47,7 @@ public class SecurityConfig {
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
+                                .decoder(jwtDecoder())
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                         )
                 )
@@ -59,7 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        SecretKey secretKey = new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        SecretKeySpec secretKey = new SecretKeySpec(DECODED_KEY, "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
 
@@ -68,7 +70,11 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             String role = jwt.getClaimAsString("role");
-            if (role == null) return List.of();
+            System.out.println("JWT role claim: " + role);
+            if (role == null) {
+                System.out.println("WARNING: Role is null in JWT claims");
+                return List.of();
+            }
             return List.of(new SimpleGrantedAuthority(role)); // expects role to be like "ROLE_ADMIN"
         });
         return converter;

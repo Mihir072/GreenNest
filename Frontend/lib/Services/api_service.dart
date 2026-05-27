@@ -3,11 +3,10 @@
 import 'dart:convert';
 import 'package:greennest/Helper/email_request.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
 
 class ApiService {
-  // static const String baseUrl = 'http://192.168.0.106:8081';
-  static const String baseUrl = 'https://greennest-jeww.onrender.com';
+  static const String baseUrl = 'http://192.168.0.103:8081';
+  // static const String baseUrl = 'https://greennest-jeww.onrender.com';
 
   static Future<http.Response> getCategories() async {
     try {
@@ -63,21 +62,30 @@ class ApiService {
   }) async {
     try {
       final url = Uri.parse('$baseUrl/auth/login');
+      final body = {
+        'email': email,
+        'password': password,
+      };
+
+      print('API: POST $url');
+      print('Body: ${jsonEncode(body)}');
+
       final response = await http
           .post(
             url,
             headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'email': email,
-              'password': password,
-            }),
+            body: jsonEncode(body),
           )
           .timeout(
             const Duration(seconds: 30),
           );
+
+      print('Login API Response Status: ${response.statusCode}');
+      print('Login API Response Body: ${response.body}');
+
       return response;
     } catch (e) {
-      print('Login error: $e');
+      print('Login API error: $e');
       rethrow;
     }
   }
@@ -88,15 +96,29 @@ class ApiService {
     required String email,
     required String newPassword,
   }) async {
-    final url = Uri.parse('$baseUrl/auth/passwordForgot/$email');
-    final response = await http.put(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
+    try {
+      final url = Uri.parse('$baseUrl/auth/passwordForgot/$email');
+      final body = {
         'password': newPassword,
-      }),
-    );
-    return response;
+      };
+
+      print('API: PUT $url');
+      print('Body: ${jsonEncode(body)}');
+
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      print('Forgot Password API Response Status: ${response.statusCode}');
+      print('Forgot Password API Response Body: ${response.body}');
+
+      return response;
+    } catch (e) {
+      print('Forgot Password API error: $e');
+      rethrow;
+    }
   }
 
   //--------------------- SHOW ALL PLANTS ---------------------//
@@ -536,18 +558,30 @@ class ApiService {
     required String token,
   }) async {
     try {
+      final url = '$baseUrl/orders/place';
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      print('API: POST $url');
+      print(
+          'Headers: Content-Type: application/json, Authorization: Bearer ${token.substring(0, 20)}...');
+      print('Body: ${jsonEncode(orderData)}');
+
       final response = await http
           .post(
-            Uri.parse('$baseUrl/orders/place'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
+            Uri.parse(url),
+            headers: headers,
             body: jsonEncode(orderData),
           )
           .timeout(const Duration(seconds: 30));
+
+      print('Response received - Status: ${response.statusCode}');
+
       return response;
     } catch (e) {
+      print('createOrder Exception: $e');
       throw Exception('Failed to create order: $e');
     }
   }

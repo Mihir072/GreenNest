@@ -3,11 +3,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:greennest/Util/colors.dart';
 import 'package:greennest/services/api_service.dart';
 import 'package:greennest/Widget/custom_toast.dart';
-import 'package:greennest/Util/icons.dart';
-import 'package:greennest/Util/strings.dart';
 import 'checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {

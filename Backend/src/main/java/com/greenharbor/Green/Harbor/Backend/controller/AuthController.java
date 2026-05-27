@@ -58,9 +58,15 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         try {
+            System.out.println("=== AuthController.login() called ===");
             Map<String, Object> loginResponse = authService.login(request);
+            System.out.println("=== Login response from AuthService: " + loginResponse);
             return ResponseEntity.ok(loginResponse);
         } catch (Exception e) {
+            System.err.println("=== ERROR in AuthController.login() ===");
+            System.err.println("Exception type: " + e.getClass().getName());
+            System.err.println("Exception message: " + e.getMessage());
+            e.printStackTrace();
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Invalid email or password");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -146,10 +152,26 @@ public class AuthController {
     @PutMapping("/passwordForgot/{email}")
     public ResponseEntity<?> forgotPassword(@PathVariable String email, @RequestBody Map<String, String> request) {
         try {
+            System.out.println("=== FORGOT PASSWORD ENDPOINT ===");
+            System.out.println("Email from path: " + email);
+            System.out.println("Request body: " + request);
+            
             String newPassword = request.get("password");
+            System.out.println("Password from request: " + newPassword);
+            
+            if (newPassword == null || newPassword.isEmpty()) {
+                System.err.println("ERROR: Password is null or empty");
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Password cannot be empty");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+            
             Map<String, String> response = authService.forgotPassword(email, newPassword);
+            System.out.println("Password reset response: " + response);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            System.err.println("Error in forgot password endpoint: " + e.getMessage());
+            e.printStackTrace();
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);

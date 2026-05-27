@@ -16,7 +16,6 @@ import 'dart:convert';
 import 'cart_screen.dart';
 import 'plant_detail_screen.dart';
 import 'profile_screen.dart';
-import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   final String email;

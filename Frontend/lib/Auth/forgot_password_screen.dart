@@ -32,22 +32,33 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
     context.showLoader(message: loadingIn);
+
+    print('=== FORGOT PASSWORD REQUEST ===');
+    print('Email: ${emailCtrl.text}');
+    print('New Password: ${passwordCtrl.text}');
+
     final response = await ApiService.forgotPassword(
       email: emailCtrl.text,
       newPassword: passwordCtrl.text,
     );
     context.hideLoader();
+
+    print('Forgot Password Response Status: ${response.statusCode}');
+    print('Forgot Password Response Body: ${response.body}');
+
     if (response.statusCode == 200) {
       CustomToast.success(
         title: 'Password Reset',
         message: 'Your password has been updated',
       );
+      print('Password reset successful, redirecting to login');
       context.pushReplacement(LoginScreen());
     } else {
       CustomToast.error(
         title: 'Reset Failed',
         message: 'Could not reset password',
       );
+      print('Password reset failed with status: ${response.statusCode}');
     }
   }
 

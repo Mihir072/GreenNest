@@ -58,6 +58,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
+    // Validate token
+    if (widget.userToken.isEmpty) {
+      print('ERROR: User token is empty!');
+      CustomToast.error(
+        title: 'Authentication Error',
+        message: 'User token is missing. Please login again.',
+      );
+      return;
+    }
+
+    print('DEBUG: Token length: ${widget.userToken.length}');
+    print(
+        'DEBUG: Token (first 20 chars): ${widget.userToken.substring(0, widget.userToken.length > 20 ? 20 : widget.userToken.length)}...');
+
     setState(() => _isLoading = true);
 
     try {
@@ -78,6 +92,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             .toList(),
       };
 
+      print('DEBUG: Order data: $orderData');
+
       // Create order
       final response = await ApiService.createOrder(
         orderData,
@@ -86,6 +102,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       print('Order Response Status: ${response.statusCode}');
       print('Order Response Body: ${response.body}');
+      print('Order Response Headers: ${response.headers}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);

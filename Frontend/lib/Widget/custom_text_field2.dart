@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:greennest/Services/api_service.dart';
 import 'package:greennest/Util/colors.dart';
 import 'package:greennest/Util/sizes.dart';

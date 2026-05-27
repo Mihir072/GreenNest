@@ -34,6 +34,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     context.showLoader(message: loadingIn);
 
+    print('=== LOGIN ATTEMPT ===');
+    print('Email: ${emailCtrl.text}');
+    print('Password: ${passwordCtrl.text}');
+
     try {
       final response = await ApiService.loginUser(
         email: emailCtrl.text,
@@ -43,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context.hideLoader();
       print('Login Response Status: ${response.statusCode}');
       print('Login Response Body: ${response.body}');
+      print('Login Response Headers: ${response.headers}');
 
       if (response.statusCode == 200) {
         if (response.body.isNotEmpty) {
@@ -57,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             print('Token: ${data["token"]}');
             print('User Email: ${data["email"]}');
+            print('User Role: ${data["role"]}');
 
             // Small delay to let toast display, then navigate
             await Future.delayed(const Duration(milliseconds: 500));

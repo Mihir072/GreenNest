@@ -35,9 +35,26 @@ public class OrderController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> placeOrder(@RequestBody Order order, @RequestHeader("Authorization") String authHeader) {
         try {
+            System.out.println("=== ORDER CREATION ATTEMPT ===");
+            System.out.println("Auth header received: " + (authHeader != null ? "Yes" : "No"));
+            
+            if (authHeader == null || authHeader.isEmpty()) {
+                System.err.println("ERROR: Authorization header is missing");
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Authorization header is missing");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+            }
+
             String token = authHeader.replace("Bearer ", "");
+            System.out.println("Token length: " + token.length());
+            
             Claims claims = JwtUtil.extractAllClaims(token);
             String userId = claims.get("userId", String.class);
+            String role = claims.get("role", String.class);
+            String email = claims.get("email", String.class);
+            
+            System.out.println("Extracted Claims - UserId: " + userId + ", Role: " + role + ", Email: " + email);
+            
             order.setUserId(userId);
 
             System.out.println("Creating order: " + order);
