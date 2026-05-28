@@ -38,7 +38,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs.yaml",
-                                "/patient"
+                                "/patient",
+                                "/api/health"
                         ).permitAll()
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
